@@ -22,6 +22,10 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
     }
 }
 
+table th {
+  text-align: center;
+}
+
 // Component styles are injected through grunt
 // injector
 @import 'main/main.scss';

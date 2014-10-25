@@ -25,10 +25,19 @@ angular.module('hunterGatherApp')
       $scope.showLoad = true;
       $scope.results = [];
       var send = {catUID: $scope.selected.category.uuid, location: $scope.selected.location};
-      $http.get('/api/hunt/' + send.catUID + '/' + send.location).success(function(results) {
-        $scope.results = results;
-        $scope.showResults = true;
-        $scope.showLoad = false;
+      $http.get('/api/hunt/' + send.catUID + '/' + send.location).success(function(companies) {
+        $http.get('/api/posts').success(function(posts) {
+          var users = _.map(_.select(posts, function(c){    
+              return companies.indexOf(c.name) != -1;
+          }), 'user_id');
+          users.forEach(function (user) {
+            $http.get('/api/users/'+user).success(function(hunter) {
+              $scope.results.push(hunter[0]);
+            });
+          });
+          $scope.showResults = true;
+          $scope.showLoad = false;
+        });
       });
     };
 

@@ -38,18 +38,18 @@
     </div>
     <div class="col-lg-12" ng-show="!showLoad && showResults">
       <h2>Results!</h2>
-      <table class="table">
+      <table class="table text-center">
         <tr>
         <th>Name</th>
           <th>Twitter</th>
           <th>Product Hunt</th>
-          <th>Match %</th>
+<!--          <th>Match %</th>-->
           </tr>
-        <tr ng-repeat="person in results">
+        <tr ng-repeat="person in results |orderBy:comments_count">
         <td>{{person.name}}</td>
-          <td><a ng-href="https://twitter.com/{{person.username}}"><i class="fa fa-fw fa-twitter"></i></a></td>
-          <td><a ng-href="https://producthunt.com/{{person.username}}">P</a></td>
-          <td>{{person.percentage * 100}}%</td>
+          <td><a ng-href="https://twitter.com/{{person.username}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
+          <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
+<!--          <td class="text-center">{{person}}%</td>-->
         </tr>
       </table>
     </div>
