@@ -1,31 +1,63 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
+
 
 <header class="hero-unit" id="banner">
   <div class="container">
-    <h1>'Allo, 'Allo!</h1>
-    <p class="lead">Kick-start your next web app with Angular Fullstack</p>
-    <img src="assets/images/yeoman.png" alt="I'm Yeoman">
+    <h1>Hunter Gather</h1>
+    <p class="lead">Find who to <s>bother</s> network with to get on Product Hunt</p>
   </div>
 </header>
-
+<br>
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
+      <p class="lead">Disclaimer: we make no guarantees that the individuals returned by this tool will be 1) available, 2) interested, 3) not robots</p>
+      <form role="form-horizontal">
+  <div class="form-group">
+    <div class="col-sm-4">
+    <input type="text" ng-model="selected.category" typeahead="state as state.name for state in categories | filter:{name:$viewValue} | limitTo:8" typeahead-min-length="2" class="form-control" placeholder="Your Product Category">
+    </div>
+    <div class="col-sm-4">
+          <input type="text" ng-model="selected.location" class="form-control" placeholder="Your HQ Location">
+      </div>
+        <div class="col-sm-4">
+  <button type="submit" class="btn btn-primary btn-block" ng-click="hunt()" ng-disabled="selected === undefined || selected.category === undefined || selected.location === undefined"><i class="fa fa-fw fa-search"></i> Find hunters</button>
+      </div>
+  </div>
+</form>
       
-    <input type="text" ng-model="selected" typeahead="state as state.name for state in categories | filter:{name:$viewValue} | limitTo:8" typeahead-min-length="2" class="form-control">
-      {{selected.uuid}}
+    
+      
 <!--
       <ul class="nav nav-tabs nav-stacked col-lg-6" ng-repeat="thing in posts">
         <li><a href="#" tooltip="{{thing.tagline}}">{{thing.name}}</a></li>
       </ul>
 -->
     </div>
+    <div class="col-lg-12" ng-show="showLoad">
+      <h2 class="text-center"><i class="fa fa-fw fa-spin fa-spinner"></i> Gathering hunters...</h2>
+    </div>
+    <div class="col-lg-12" ng-show="!showLoad && showResults">
+      <h2>Results!</h2>
+      <table class="table">
+        <tr>
+        <th>Name</th>
+          <th>Twitter</th>
+          <th>Product Hunt</th>
+          <th>Match %</th>
+          </tr>
+        <tr ng-repeat="person in results">
+        <td>{{person.name}}</td>
+          <td><a ng-href="https://twitter.com/{{person.username}}"><i class="fa fa-fw fa-twitter"></i></a></td>
+          <td><a ng-href="https://producthunt.com/{{person.username}}">P</a></td>
+          <td>{{person.percentage * 100}}%</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
 
 <footer class="footer">
   <div class="container">
-      <p><a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
-         <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
+      <p>Made by <a href="http://twitter.com/rudeboot">boots</a> and <a href="http://twitter.com/actualhop">hop</a></p>
   </div>
 </footer>

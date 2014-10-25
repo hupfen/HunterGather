@@ -6,33 +6,31 @@ angular.module('hunterGatherApp')
     $scope.users = [];
     $scope.categories = [];
     $scope.selected = undefined;
-//    
-//    $http.get('/api/posts').then(function(posts) {
-//      $scope.posts = posts.data;
-//    }).then(function() {
-//      $http.get('/api/users/').then(function(users) {
-//        $scope.users = users.data;
-//      }).then(function() {
-//        $scope.posts = $scope.posts.map(function(post) {
-//          post.user = _.find($scope.users, function(usr) {
-//            return usr.id === post.user_id;
-//          });
-//          return post;
-//        });
-//      });
+    $scope.showLoad = false;
+    $scope.showResults = false;
+
+//    $http.get('/api/posts').success(function(posts) {
+//      $scope.posts = posts;
 //    });
-//    
-    $http.get('/api/posts').success(function(posts) {
-      $scope.posts = posts;
-    });
-    $http.get('/api/users').success(function(users) {
-      $scope.users = users;
-    });
+//    $http.get('/api/users').success(function(users) {
+//      $scope.users = users;
+//    });
     $http.get('/api/cats').success(function(categorys) {
       $scope.categories = _.reject(categorys, function(cat) {
         return cat.number_of_organizations >= 1000;
       });
     });
+    
+    $scope.hunt = function() {
+      $scope.showLoad = true;
+      $scope.results = [];
+      var send = {catUID: $scope.selected.category.uuid, location: $scope.selected.location};
+      $http.get('/api/hunt/' + send.catUID + '/' + send.location).success(function(results) {
+        $scope.results = results;
+        $scope.showResults = true;
+        $scope.showLoad = false;
+      });
+    };
 
 //    $scope.addThing = function() {
 //      if($scope.newThing === '') {
