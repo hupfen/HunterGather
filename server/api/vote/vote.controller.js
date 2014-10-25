@@ -12,6 +12,26 @@ exports.index = function(req, res) {
 };
 
 // Get a single vote
+exports.userVotes = function(req, res) {
+  Vote.find({user_id: parseInt(req.params.id)}, function (err, vote) {
+    if(err) { return handleError(res, err); }
+    if(!vote) { return res.send(404); }
+    return res.json(vote);
+  });
+};
+
+
+// Get a single vote
+exports.postVotes = function(req, res) {
+  Vote.find({post_id: parseInt(req.params.id)}, function (err, vote) {
+    if(err) { return handleError(res, err); }
+    if(!vote) { return res.send(404); }
+    return res.json(vote);
+  });
+};
+
+
+// Get a single vote
 exports.show = function(req, res) {
   Vote.findById(req.params.id, function (err, vote) {
     if(err) { return handleError(res, err); }

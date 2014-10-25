@@ -43,13 +43,13 @@
         <th>Name</th>
           <th>Twitter</th>
           <th>Product Hunt</th>
-<!--          <th>Match %</th>-->
+          <th>Category votes</th>
           </tr>
-        <tr ng-repeat="person in results |orderBy:comments_count">
+        <tr ng-repeat="person in results | orderBy:['votes.length', 'comments_count']:reverse">
         <td>{{person.name}}</td>
           <td><a ng-href="https://twitter.com/{{person.username}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
           <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
-<!--          <td class="text-center">{{person}}%</td>-->
+         <td class="text-center">{{person.votes.length}}</td>
         </tr>
       </table>
     </div>
