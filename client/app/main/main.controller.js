@@ -2,17 +2,26 @@
 
 angular.module('hunterGatherApp')
   .controller('MainCtrl', function ($scope, $http) {
-    $scope.awesomeThings = [];
-
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
+    $scope.posts = [];
+    $scope.users = [];
+    
+    $http.get('/api/posts').then(function(posts) {
+      $scope.posts = posts;
+    }).then(function() {
+      $http.get('/api/users/').then(function(users) {
+        $scope.users = users;
+      }).then(function() {
+        
+      });
     });
+    
+    
 
     $scope.addThing = function() {
       if($scope.newThing === '') {
         return;
       }
-      $http.post('/api/things', { name: $scope.newThing });
+      $http.post('/api/posts', { name: $scope.newThing });
       $scope.newThing = '';
     };
 
