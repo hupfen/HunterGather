@@ -29,7 +29,9 @@ angular.module('hunterGatherApp')
       $scope.users = users;
     });
     $http.get('/api/cats').success(function(categorys) {
-      $scope.categories = categorys;
+      $scope.categories = _.reject(categorys, function(cat) {
+        return cat.number_of_organizations >= 1000;
+      });
     });
 
 //    $scope.addThing = function() {
