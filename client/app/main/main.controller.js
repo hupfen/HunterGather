@@ -28,9 +28,9 @@ angular.module('hunterGatherApp')
     $http.get('/api/users').success(function(users) {
       $scope.users = users;
     });
-    $http.get('/api/categorys').success(function(categorys) {
+    $http.get('/api/cats').success(function(categorys) {
       $scope.categories = categorys;
-    })
+    });
 
 //    $scope.addThing = function() {
 //      if($scope.newThing === '') {
