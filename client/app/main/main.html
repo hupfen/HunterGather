@@ -73,16 +73,17 @@
         <th>Name</th>
           <th>Twitter</th>
           <th>Product Hunt</th>
-          <th>Category votes</th>
+          <th>Interest Score</th>
           </tr>
-        <tr ng-repeat="person in results | unique:id | orderBy:['posted', 'maker_of_count', 'posts_count', 'comments_count', 'votes_count']:reverse | limitTo:50" ng-class="{'success': person.posted > 0, 
+        <tr ng-repeat="person in results | unique:id | orderBy:['posted', 'vote_ratio', 'maker_of_count', 'posts_count', 'comments_count', 'votes_count']:reverse | limitTo:50" ng-class="{'success': person.posted > 0, 
           'info': (person.maker_of_count !== 0 && person.posted === 0),
           'warning': (person.posts_count <= 4 && person.comments_count <= 15 && person.maker_of_count === 0)}">
           <td><img ng-src="{{person.image}}" class="avatar"></td>
         <td>{{person.name}}</td>
           <td><a ng-href="https://twitter.com/intent/tweet?text=Hey @{{person.username}}! I made a {{selected.category.name}} product called {{project}} I think you'd like.&via=phgather&url={{address}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
           <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
-         <td class="text-center">{{votecount[person.id]}}</td>
+         <td class="text-center">{{person.vote_ratio.toFixed(2)}}</td>
+          <td style="display: none;">{{person.vote_ratio * (person.votes_count > 30 ? 1 : person.votes_count / 30)}}</td>
         </tr>
         <tr ng-show="results.length === 0">
         <td><i class="fa fa-fw fa-spin fa-spinner"></i></td>

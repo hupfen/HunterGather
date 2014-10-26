@@ -114,6 +114,14 @@ angular.module('hunterGatherApp')
               else {
                 user.posted = 0;
               }
+              $scope.votecount = _.countBy($scope.results, function(u) {
+                return u.id;
+              });
+              user.rel_votes = $scope.votecount[user.id];
+              if (isNaN(user.rel_votes)) { user.rel_votes = 1;}
+              else {user.rel_votes++;}
+              // we'll use 30 votes as a good mark for a moderate active user
+              user.vote_ratio = (((user.rel_votes / user.votes_count) * 100) * (user.votes_count > 30 ? 1 : user.votes_count / 30));
               $scope.results.push(user);
             });
           }); 
@@ -124,9 +132,9 @@ angular.module('hunterGatherApp')
       });
     };
     
-    $scope.$watchCollection('results', function(newValue, oldValue) {
-      $scope.votecount = _.countBy($scope.results, function(u) {
-        return u.id;
-      });
-    });
+//    $scope.$watchCollection('results', function(newValue, oldValue) {
+//      $scope.votecount = _.countBy($scope.results, function(u) {
+//        return u.id;
+//      });
+//    });
   });
