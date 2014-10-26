@@ -41,6 +41,8 @@ angular.module('hunterGatherApp')
 })
   .controller('MainCtrl', function ($scope, $http, $q) {
     $scope.categories = [];
+    $scope.allUsers = [];
+    $scope.allPosts = [];
     $scope.selected = undefined;
     $scope.project = '';
     $scope.address = '';
@@ -53,6 +55,17 @@ angular.module('hunterGatherApp')
       $scope.categories = _.reject(categorys, function(cat) {
         return cat.number_of_organizations >= 1000;
       });
+    });
+    
+    $http.get('/api/users').success(function(users) {
+      $scope.allUsers = _.reject(users, function(us) {
+        return (us.id === 2) || (us.posts_count === 0 && us.maker_of_count === 0 && us.comments_count === 0);
+        // filters out Ryan and non-submitters
+      });
+    });
+    
+    $http.get('/api/posts').success(function(posts) {
+      $scope.allPosts = posts;
     });
     
     $scope.hunt = function() {
@@ -73,46 +86,41 @@ angular.module('hunterGatherApp')
           $scope.showError = true;
           return;
         }
-          cos.forEach(function (co) {
-          $http.get('/api/posts/byCompany/'+co).then(function(posts) {
-            var post = posts.data;
-            if (post.length > 0) {
-              post = post[0];
-              var u = [];
-              $http.get('/api/users/'+post.user_id).then(function(hunter) {
-                u.push(hunter.data[0]);
-              })
-              .then(function() {
-                // get people who've voted for this, but not submitted
-                $http.get('/api/votes/post/'+post.id).success(function(votes) {
-                  var voters = _.map(votes, function(v) {
-                    return v.user_id;
-                  });
-                  voters.forEach(function(voter) {
-                    $http.get('/api/users/'+voter).success(function(h) {
-                        var us = h[0];
-                        if (_.any(u, {'id': us.id})) {
-                          us.posted = 1000;
-                        }
-                      else {
-                        us.posted = 0;
-                      }
-                      if ((us.id !== 2) && (us.posts_count !== 0 || us.maker_of_count !== 0 || us.comments_count !== 0))
-                      {
-                        $scope.results.push(us);
-                      }
-                      });
-                  });
-                });
-              })
-              .then(function() {
-                $scope.showResults = true;
-                $scope.showLoad = false;
-                $scope.showError = false;
-              });
-            }
-          });
+        var huntedHere = [];
+        var posts = [];
+        _.filter($scope.allPosts, function(post) {
+          return _.contains(cos, post.name);
+        }).forEach(function(post) {
+          huntedHere.push(_.find($scope.allUsers, function(u) {
+            return u.id === post.user_id;
+          }));
+          posts.push(post.id);
         });
+        huntedHere; //not having this here breaks things, because Javascript
+        huntedHere = _.compact(huntedHere);
+        posts.forEach(function(postId) {
+          $http.get('/api/votes/post/'+postId).success(function(votes) {
+            var voters = _.map(votes, function(v) {
+              return v.user_id;
+            });
+            _.filter($scope.allUsers, function(u) {
+              return _.contains(voters, u.id);
+            })
+            .forEach(function(user) {
+              huntedHere; //not having this here breaks things, because Javascript
+                if (_.any(huntedHere, {'id': user.id})) {
+                  user.posted = 1000;
+                }
+              else {
+                user.posted = 0;
+              }
+              $scope.results.push(user);
+            });
+          }); 
+        });
+        $scope.showResults = true;
+        $scope.showLoad = false;
+        $scope.showError = false;
       });
     };
     

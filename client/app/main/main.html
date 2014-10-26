@@ -10,7 +10,7 @@
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
-      <p class="lead">Disclaimer: we make no guarantees that the individuals returned by this tool will be 1) available, 2) interested, 3) not robots</p>
+      <p class="lead">Disclaimer: we make no guarantees that the individuals returned by this tool will be 1) available, 2) interested, 3) interesting</p>
       <p class="lead">Use responsibly, nobody likes an annoying asshole</p>
       <form role="form-horizontal">
   <div class="form-group">
@@ -83,8 +83,10 @@
           <td><a ng-href="https://twitter.com/intent/tweet?text=Hey @{{person.username}}! I made a {{selected.category.name}} product called {{project}} I think you'd like.&via=phgather&url={{address}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
           <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
          <td class="text-center">{{votecount[person.id]}}</td>
-          <td style="display:none;">{{person}}</td>
         </tr>
+        <tr ng-show="results.length === 0">
+        <td><i class="fa fa-fw fa-spin fa-spinner"></i></td>
+        <td colspan="4">Loading rows...</td></tr>
       </table>
     </div>
     <div class="col-lg-12" ng-show="showError">
