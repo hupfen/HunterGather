@@ -6,6 +6,7 @@ var controller = require('./post.controller');
 var router = express.Router();
 
 router.get('/', controller.index);
+router.get('/byCompany/:id', controller.byName);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);

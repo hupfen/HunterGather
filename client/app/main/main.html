@@ -11,16 +11,20 @@
   <div class="row">
     <div class="col-lg-12">
       <p class="lead">Disclaimer: we make no guarantees that the individuals returned by this tool will be 1) available, 2) interested, 3) not robots</p>
+      <p class="lead">Use responsibly, nobody likes an annoying asshole</p>
       <form role="form-horizontal">
   <div class="form-group">
-    <div class="col-sm-4">
-    <input type="text" ng-model="selected.category" typeahead="state as state.name for state in categories | filter:{name:$viewValue} | limitTo:8" typeahead-min-length="2" class="form-control" placeholder="Your Product Category">
-    </div>
-    <div class="col-sm-4">
-          <input type="text" ng-model="selected.location" class="form-control" placeholder="Your HQ Location">
+        <div class="col-lg-3">
+          <input type="text" ng-model="project" class="form-control" placeholder="Product Name" maxlength="40">
       </div>
-        <div class="col-sm-4">
-  <button type="submit" class="btn btn-primary btn-block" ng-click="hunt()" ng-disabled="selected === undefined || selected.category === undefined || selected.location === undefined"><i class="fa fa-fw fa-search"></i> Find hunters</button>
+    <div class="col-lg-3">
+          <input type="text" ng-model="address" class="form-control" placeholder="Product Website">
+      </div>
+    <div class="col-lg-3">
+    <input type="text" ng-model="selected.category" typeahead="state as state.name for state in categories | filter:{name:$viewValue} | limitTo:8" typeahead-min-length="2" class="form-control" placeholder="Product Category">
+    </div>
+        <div class="col-lg-3">
+  <button type="submit" class="btn btn-primary btn-block" ng-click="hunt()" ng-disabled="selected === undefined || selected.category === undefined || project === undefined || address === undefined"><i class="fa fa-fw fa-search"></i> Find hunters</button>
       </div>
   </div>
 </form>
@@ -33,6 +37,30 @@
       </ul>
 -->
     </div>
+    <div class="col-lg-12" ng-show="!showLoad && !showResults">
+      <h2>How to use</h2>
+      <p>Pick the best category for your project. We try to find hunts in that category and show you everyone relevant to those hunts.</p>
+      <table class="table text-center">
+        <tr>
+          <th>Reading the table</th>
+          </tr>
+        <tr class="success">
+          <td>Person has hunted products in that category.</td>
+        </tr>
+        
+        <tr>
+          <td>Normal folk.</td>
+        </tr>
+        
+        <tr class="warning">
+          <td>Rarely active, or very new (low comment/vote counts).</td>
+        </tr>
+        
+        <tr class="danger">
+          <td>Probably cannot hunt (no evidence of commenting/posting).</td>
+        </tr>
+      </table>
+    </div>
     <div class="col-lg-12" ng-show="showLoad">
       <h2 class="text-center"><i class="fa fa-fw fa-spin fa-spinner"></i> Gathering hunters...</h2>
     </div>
@@ -40,16 +68,21 @@
       <h2>Results!</h2>
       <table class="table text-center">
         <tr>
+          <th></th>
         <th>Name</th>
           <th>Twitter</th>
           <th>Product Hunt</th>
           <th>Category votes</th>
           </tr>
-        <tr ng-repeat="person in results | orderBy:['votes.length', 'comments_count']:reverse">
+        <tr ng-repeat="person in results | unique:id | orderBy:['posted', 'maker_of_count', 'posts_count', 'comments_count', 'votes_count']:reverse" ng-class="{'success': person.posted > 0, 
+          'danger': (person.posts_count === 0 && person.maker_of_count === 0 && person.comments_count === 0), 
+          'warning': (person.posts_count <= 4 && person.comments_count <= 15) && (person.posts_count !== 0 && person.maker_of_count !== 0 && person.comments_count !== 0)}">
+          <td><img ng-src="{{person.image}}" class="avatar"></td>
         <td>{{person.name}}</td>
-          <td><a ng-href="https://twitter.com/{{person.username}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
+          <td><a ng-href="https://twitter.com/intent/tweet?text=Hey @{{person.username}}! I made a thing called {{project}} I think you'd like.&via=phgather&url={{address}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
           <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
-         <td class="text-center">{{person.votes.length}}</td>
+         <td class="text-center">{{votecount[person.id]}}</td>
+          <td style="display:none;">{{person}}</td>
         </tr>
       </table>
     </div>

@@ -11,6 +11,13 @@ exports.index = function(req, res) {
   });
 };
 
+exports.byName = function(req, res) {
+  Post.find({name: req.params.id}, function (err, posts) {
+    if(err) { return handleError(res, err); }
+    return res.json(200, posts);
+  });
+};
+
 // Get a single post
 exports.show = function(req, res) {
   Post.findById(req.params.id, function (err, post) {
