@@ -39,32 +39,33 @@
     </div>
     <div class="col-lg-12" ng-show="!showLoad && !showResults">
       <h2>How to use</h2>
-      <p>Pick the best category for your project. We try to find hunts in that category and show you everyone relevant to those hunts.</p>
+      <p>Pick the best category for your project. We try to find hunts in that category and show you everyone relevant to those hunts. Accounts with no evidence they can hunt products (no posts, comments, or maker credits) are excluded.</p>
       <table class="table text-center">
         <tr>
           <th>Reading the table</th>
           </tr>
         <tr class="success">
-          <td>Person has hunted products in that category.</td>
+          <td>Has hunted products in this category.</td>
+        </tr>
+        
+        <tr class="info">
+          <td>Makers, though maybe not a maker in your category.</td>
         </tr>
         
         <tr>
-          <td>Normal folk.</td>
+          <td>Normal people.</td>
         </tr>
         
         <tr class="warning">
           <td>Rarely active, or very new (low comment/vote counts).</td>
         </tr>
         
-        <tr class="danger">
-          <td>Probably cannot hunt (no evidence of commenting/posting).</td>
-        </tr>
       </table>
     </div>
     <div class="col-lg-12" ng-show="showLoad">
       <h2 class="text-center"><i class="fa fa-fw fa-spin fa-spinner"></i> Gathering hunters...</h2>
     </div>
-    <div class="col-lg-12" ng-show="!showLoad && showResults">
+    <div class="col-lg-12" ng-show="!showLoad && showResults && !showError">
       <h2>Results!</h2>
       <table class="table text-center">
         <tr>
@@ -74,17 +75,21 @@
           <th>Product Hunt</th>
           <th>Category votes</th>
           </tr>
-        <tr ng-repeat="person in results | unique:id | orderBy:['posted', 'maker_of_count', 'posts_count', 'comments_count', 'votes_count']:reverse" ng-class="{'success': person.posted > 0, 
-          'danger': (person.posts_count === 0 && person.maker_of_count === 0 && person.comments_count === 0), 
-          'warning': (person.posts_count <= 4 && person.comments_count <= 15) && (person.posts_count !== 0 && person.maker_of_count !== 0 && person.comments_count !== 0)}">
+        <tr ng-repeat="person in results | unique:id | orderBy:['posted', 'maker_of_count', 'posts_count', 'comments_count', 'votes_count']:reverse | limitTo:50" ng-class="{'success': person.posted > 0, 
+          'info': (person.maker_of_count !== 0 && person.posted === 0),
+          'warning': (person.posts_count <= 4 && person.comments_count <= 15 && person.maker_of_count === 0)}">
           <td><img ng-src="{{person.image}}" class="avatar"></td>
         <td>{{person.name}}</td>
-          <td><a ng-href="https://twitter.com/intent/tweet?text=Hey @{{person.username}}! I made a thing called {{project}} I think you'd like.&via=phgather&url={{address}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
+          <td><a ng-href="https://twitter.com/intent/tweet?text=Hey @{{person.username}}! I made a {{selected.category.name}} product called {{project}} I think you'd like.&via=phgather&url={{address}}" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></td>
           <td><a ng-href="https://producthunt.com/{{person.username}}" target="_blank">P</a></td>
          <td class="text-center">{{votecount[person.id]}}</td>
           <td style="display:none;">{{person}}</td>
         </tr>
       </table>
+    </div>
+    <div class="col-lg-12" ng-show="showError">
+      <h2>No results :(</h2>
+<p>Either our data set sucks, or you need to try a different category.</p>
     </div>
   </div>
 </div>

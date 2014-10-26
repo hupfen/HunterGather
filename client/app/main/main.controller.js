@@ -46,6 +46,7 @@ angular.module('hunterGatherApp')
     $scope.address = '';
     $scope.showLoad = false;
     $scope.showResults = false;
+    $scope.showError = false;
     $scope.reverse = true;
 
     $http.get('/api/cats').success(function(categorys) {
@@ -59,12 +60,19 @@ angular.module('hunterGatherApp')
       var users = [];
       $scope.showLoad = true;
       $scope.showResults = false;
+      $scope.showError = false;
       $scope.results = [];
       var send = {catUID: $scope.selected.category.uuid, location: $scope.selected.location};
       $http.get('/api/hunt/cat/' + $scope.selected.category.uuid).then(function(companies) {
         cos = companies.data; //companies of that category
       })
       .then(function() {
+        if (cos.length === 0) {
+          $scope.showResults = true;
+          $scope.showLoad = false;
+          $scope.showError = true;
+          return;
+        }
           cos.forEach(function (co) {
           $http.get('/api/posts/byCompany/'+co).then(function(posts) {
             var post = posts.data;
@@ -89,7 +97,10 @@ angular.module('hunterGatherApp')
                       else {
                         us.posted = 0;
                       }
+                      if ((us.id !== 2) && (us.posts_count !== 0 || us.maker_of_count !== 0 || us.comments_count !== 0))
+                      {
                         $scope.results.push(us);
+                      }
                       });
                   });
                 });
@@ -97,6 +108,7 @@ angular.module('hunterGatherApp')
               .then(function() {
                 $scope.showResults = true;
                 $scope.showLoad = false;
+                $scope.showError = false;
               });
             }
           });
